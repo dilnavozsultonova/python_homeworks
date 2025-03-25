@@ -1,0 +1,7 @@
+Word Count Report
+Total words: 16
+is - 3
+file - 3
+this - 2
+a - 2
+testing - 1

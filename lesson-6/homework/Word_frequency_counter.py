@@ -13,8 +13,8 @@ file=open(cur_dir / "sample.txt","r")
 
 cnt = dict()
 
-s = ""
 for line in file.readlines():
+    s = ""
     for i in line:
         if i.isalpha():
             s += i.lower()
@@ -47,3 +47,9 @@ file=open(cur_dir / "word_count_report.txt","w")
 file.write(f"Word Count Report\nTotal words: {total}\n")
 for i in range(min(len(l),5)):
     file.write(f"{l[i][1]} - {l[i][0]}\n")
+
+
+
+num=int(input("Enter the number : "))
+for i in range(min(len(l),num)):
+    print(f"{l[i][1]} - {l[i][0]}\n")

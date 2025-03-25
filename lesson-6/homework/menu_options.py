@@ -1,4 +1,4 @@
-file=open("employee.txt","w+")
+file=open("lesson-6/homework/employee.txt","w+")
 while(True):
     print("1.Add new employee record")
     print("2.View all employee records")

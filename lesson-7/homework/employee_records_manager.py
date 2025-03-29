@@ -4,6 +4,7 @@ class Employee:
         self.name=name
         self.position=position
         self.salary=salary
+   
 
 class EmployeeManager:
     def __init__(self,filename="employee.txt"):
@@ -67,3 +68,45 @@ class EmployeeManager:
                 print(f"Employee with ID {employee_id} deleted successfully.")
                 return
         print(f"Employee with ID {employee_id} not found.")
+if __name__== "__main__":
+    manager = EmployeeManager()
+
+    while True:
+        print("\Employee Management system")
+        print("1.Add Employee")
+        print("2.View Employee")
+        print("3.Update Employee")
+        print("4.Delete Employee")
+        print("5.Exit")
+
+        choice=input("Enter your choice: ")
+
+        if choice=="1":
+            emp_id=input("Enter Employee ID: ")
+            name=input("Enter employee name: ")
+            position=input("Enter employee position: ")
+            salary=float(input("Enter employee salary: "))
+            emp=Employee(emp_id,name,position,salary)
+            manager.add_employee(emp)
+            print("Employee added successfully")
+        elif choice=="2":
+            manager.view_all_employees()
+        elif choice == "3":
+            emp_id = input("Enter employee ID to search: ")
+            manager.search_employee_by_id(emp_id)
+        elif choice=="4":
+              emp_id = input("Enter employee ID to update: ")
+              name = input("Enter new name (leave blank to keep current): ")
+              position = input("Enter new position (leave blank to keep current): ")
+              salary = input("Enter new salary (leave blank to keep current): ")
+              salary = float(salary) if salary else None
+              manager.update_employee(emp_id, name, position, salary)
+        elif choice=="5":
+            emp_id=input("Enter employee ID: ")
+            manager.delete_employee(emp_id)
+        elif choice=="6":
+            print("Goodbye")
+            break
+        else:
+            print("Invalid choice.Try again:")
+

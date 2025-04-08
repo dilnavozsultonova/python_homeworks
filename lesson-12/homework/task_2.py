@@ -5,25 +5,20 @@ import requests
 import sqlite3
 import csv
 
-# Define the URL
 url = 'https://realpython.github.io/fake-jobs'
 
-# Fetch the content of the page
+
 response = requests.get(url)
 html_content = response.text
 
-# Parse the content with BeautifulSoup
 soup = BeautifulSoup(html_content, "html.parser")
 
-# Extract job titles, company names, and locations
 job_titles = soup.find_all("h2")
 company_names = soup.find_all("h3")
 locations = [location.text.strip() for location in soup.find_all("p", class_="location")]
 
-# Extract the apply links
 base_urls = [x.get("href") for x in soup.find_all("a") if x.text == "Apply"]
 
-# Get job descriptions by visiting each apply URL
 job_descriptions = []
 for base_url in base_urls:
     res = requests.get(base_url)
@@ -31,11 +26,9 @@ for base_url in base_urls:
     raw_info = BeautifulSoup(str(soup2.find_all("div", class_="content")), "html.parser")
     job_descriptions.append(raw_info.find("p").text if raw_info.find("p") else "No description available")
 
-# Establish a connection to the SQLite database
 with sqlite3.connect("lesson-12/homework/jobs.db") as connection:
     cursor = connection.cursor()
 
-    # Create the jobs table if it doesn't already exist
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS jobs (
         JobTitle TEXT,
@@ -47,7 +40,6 @@ with sqlite3.connect("lesson-12/homework/jobs.db") as connection:
     );
     """)
 
-    # Prepare job data
     jobs = []
     for i in range(len(job_titles)):
         job = { 
@@ -59,7 +51,7 @@ with sqlite3.connect("lesson-12/homework/jobs.db") as connection:
         }
         jobs.append(job)
 
-    # Insert or update job listings into the database
+   
     for job in jobs:
         job_title = job["jobTitle"]
         company_name = job["companyName"]
@@ -67,12 +59,11 @@ with sqlite3.connect("lesson-12/homework/jobs.db") as connection:
         description = job["Description"]
         application_link = job["ApplicationLink"]
 
-        # Check if the job already exists in the database
         cursor.execute("SELECT COUNT(*) FROM jobs WHERE JobTitle = ? AND CompanyName = ? AND Location = ?", (job_title, company_name, location))
         existing_job = cursor.fetchone()[0]
 
         if existing_job > 0:
-            # If job exists, update the record
+         
             update_query = """
             UPDATE jobs
             SET Description = ?, ApplicationLink = ?
@@ -81,7 +72,7 @@ with sqlite3.connect("lesson-12/homework/jobs.db") as connection:
             cursor.execute(update_query, (description, application_link, job_title, company_name, location))
             print(f"Updated job: {job_title}")
         else:
-            # If job doesn't exist, insert it
+          
             insert_query = """
             INSERT INTO jobs (JobTitle, CompanyName, Location, Description, ApplicationLink)
             VALUES (?, ?, ?, ?, ?)
@@ -91,7 +82,7 @@ with sqlite3.connect("lesson-12/homework/jobs.db") as connection:
         
         connection.commit()
 
-# Function to filter job listings by location or company name
+
 def filtering_jobs():
     prompt = input("Location or Company-based filtering? (Enter 'company' or 'location'): ").strip().lower()
     flag = None
@@ -106,7 +97,6 @@ def filtering_jobs():
     else:
         raise ValueError("Invalid input. Please enter 'company' or 'location'.")
 
-    # Filter jobs based on the user input
     filtered_jobs = []
     with sqlite3.connect("lesson-12/homework/jobs.db") as connection:
         cursor = connection.cursor()
@@ -120,7 +110,6 @@ def filtering_jobs():
     
     return filtered_jobs
 
-# Function to export filtered results into a CSV file
 def convert2CSV():
     filtered_jobs = filtering_jobs()
 
@@ -133,5 +122,5 @@ def convert2CSV():
     else:
         print("No jobs found for the given filter.")
 
-# Example: Filtering and exporting jobs
+
 convert2CSV()
